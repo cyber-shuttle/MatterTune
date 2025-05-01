@@ -20,10 +20,15 @@ workspace:
 
 additional_dependencies:
   conda:
+    - python=3.10
     - pip
-    - python>=3.10
-     
+    - pytorch
+    - pytorch-lightning
+    - ase
+    - numpy
+    - wandb
+    - tqdm
+    - rich
   pip:
-    - cython>=0.29.32 
-    - setuptools>=45
-    
+    - nshutils
+    - mattertune
