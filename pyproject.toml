@@ -16,6 +16,8 @@ dependencies = [
     "nshconfig-extra[extra]",
     "rich",
     "wandb",
+    "tensorboard",
+    "tensorboardX",
     "nshutils",
 ]
 
