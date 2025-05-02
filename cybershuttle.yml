@@ -25,10 +25,13 @@ additional_dependencies:
     - pytorch
     - pytorch-lightning
     - ase
+    - scikit-learn
+    - torchmetrics
     - numpy
     - wandb
     - tqdm
     - rich
+    - mattersim
+    - fairchem-core
   pip:
-    - nshutils
-    - mattertune
+    - git+https://github.com/cyber-shuttle/mattertune.git
