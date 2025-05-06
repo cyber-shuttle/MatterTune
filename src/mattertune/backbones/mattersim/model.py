@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import copy
 import importlib.util
 import logging
 from typing import TYPE_CHECKING, Any, Literal, cast
@@ -256,7 +257,7 @@ class MatterSimM3GNetBackboneModule(
         energy = labels.get(self.energy_prop_name, None)
         forces = labels.get(self.forces_prop_name, None)
         stress = labels.get(self.stress_prop_name, None)
-        graph = self.graph_convertor.convert(atoms)
+        graph = self.graph_convertor.convert(copy.deepcopy(atoms))
         graph.atomic_numbers = torch.tensor(
             atoms.get_atomic_numbers(), dtype=torch.long
         )
@@ -272,7 +273,7 @@ class MatterSimM3GNetBackboneModule(
 
         atomic_numbers: torch.Tensor = batch["atomic_numbers"].long()  # (n_atoms,)
         batch_idx: torch.Tensor = batch["batch"]  # (n_atoms,)
-        
+
         ## get num_atoms per sample
         all_ones = torch.ones_like(atomic_numbers)
         num_atoms = scatter(
