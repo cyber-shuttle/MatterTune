@@ -3,8 +3,7 @@ project:
   description: "Water_FinetuneTest"
   homepage: https://github.com/cyber-shuttle/MatterTune
   authors:
-    - pjaya001@odu.edu
-    - spamidig@gatech.edu
+    - nsg6@gatech.edu
   tags:
     - CISSE25
 
