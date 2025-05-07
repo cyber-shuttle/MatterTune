@@ -9,6 +9,7 @@ import nshconfig as C
 from lightning.fabric.plugins.precision.precision import _PRECISION_INPUT
 from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import Callback
+from lightning.pytorch.loggers import Logger
 from lightning.pytorch.strategies.strategy import Strategy
 
 from .backbones import ModelConfig
@@ -147,18 +148,55 @@ class TrainerConfig(C.Config):
     """
 
     def _to_lightning_kwargs(self):
-        callbacks = []
+        additional_trainer_kwargs = self.additional_trainer_kwargs.copy()
+
+        callbacks: list[Callback] = []
         if self.checkpoint is not None:
             callbacks.append(self.checkpoint.create_callback())
         if self.early_stopping is not None:
             callbacks.append(self.early_stopping.create_callback())
+        if (additional_callbacks := additional_trainer_kwargs.pop("callbacks", [])) is not None:
+            match additional_callbacks:
+                case list():
+                    for cb in additional_callbacks:
+                        if not isinstance(cb, Callback):
+                            raise ValueError(
+                                "Invalid type for additional_trainer_kwargs['callbacks']."
+                                f"Expected list of Callback, got {type(cb)}."
+                            )
+                case Callback():
+                    additional_callbacks = [additional_callbacks]
+                case _:
+                    raise ValueError(
+                        "Invalid type for additional_trainer_kwargs['callbacks']."
+                        f"Expected list or Callback, got {type(additional_callbacks)}."
+                    )
+            callbacks.extend(additional_callbacks)
 
-        loggers = []
+        loggers: list[Logger] = []
         if self.loggers == "default":
             loggers.append(CSVLoggerConfig(save_dir="./logs").create_logger())
         else:
             for logger_config in self.loggers:
                 loggers.append(logger_config.create_logger())
+
+        if (additional_loggers := additional_trainer_kwargs.pop("loggers", [])) is not None:
+            match additional_loggers:
+                case list():
+                    for logger in additional_loggers:
+                        if not isinstance(logger, Logger):
+                            raise ValueError(
+                                "Invalid type for additional_trainer_kwargs['loggers']."
+                                f"Expected list of Logger, got {type(logger)}."
+                            )
+                case Logger():
+                    additional_loggers = [additional_loggers]
+                case _:
+                    raise ValueError(
+                        "Invalid type for additional_trainer_kwargs['loggers']."
+                        f"Expected list or Logger, got {type(additional_loggers)}."
+                    )
+            loggers.extend(additional_loggers)
 
         kwargs = {
             "callbacks": callbacks,
@@ -182,7 +220,7 @@ class TrainerConfig(C.Config):
         }
 
         # Add the additional trainer kwargs
-        kwargs.update(self.additional_trainer_kwargs)
+        kwargs.update(additional_trainer_kwargs)
 
         return kwargs
 
