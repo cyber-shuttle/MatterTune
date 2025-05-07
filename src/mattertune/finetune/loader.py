@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
@@ -69,7 +68,6 @@ def create_dataloader(
     **kwargs: Unpack[DataLoaderKwargs],
 ):
     def map_fn(ase_data: ase.Atoms):
-        ase_data = copy.deepcopy(ase_data)
         data = lightning_module.atoms_to_data(ase_data, has_labels)
         data = lightning_module.cpu_data_transform(data)
         return data
