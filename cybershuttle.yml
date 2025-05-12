@@ -34,5 +34,7 @@ additional_dependencies:
     - rich
     - mattersim
     - fairchem-core
+    - ipywidgets
   pip:
+    - nshconfig-extra
     - git+https://github.com/cyber-shuttle/mattertune.git
